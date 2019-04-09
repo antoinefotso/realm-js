@@ -7,7 +7,11 @@ const path = require('path');
 const tmp = require('tmp');
 
 function waitForUpload(realm) {
-    return realm.syncSession.uploadAllLocalChanges().then(() => { return realm; });
+    return realm.syncSession.uploadAllLocalChanges().then(() => new Promise(r => {
+        // FIXME: uploadAllLocalChanges() is currently broken and sometimes resolves early
+        // https://github.com/realm/realm-sync/issues/2580
+        setTimeout(() => r(realm), 1);
+    }));
 }
 
 global.RosController = module.exports = class RosController {
