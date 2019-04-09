@@ -38,7 +38,7 @@ module.exports = {
             TestCase.assertInstanceOf(obj.list, Realm.Collection);
         });
 
-        TestCase.assertThrowsContaining(() => new Realm.List(), 'constructor');
+        TestCase.assertThrowsContaining(() => new Realm.List(), /constructor/);
         TestCase.assertInstanceOf(Realm.List, Function);
     },
 
@@ -289,40 +289,40 @@ module.exports = {
             TestCase.assertThrowsContaining(() => obj.arrayCol = [person],
                                             "Object of type (PersonObject) does not match List type (TestObject)");
             TestCase.assertThrowsContaining(() => obj.arrayCol = personList,
-                                            "LinkTypesObject.arrayCol must be of type 'TestObject[]', got 'object' (");
+                                            "LinkTypesObject.arrayCol must be of type 'TestObject[]', got 'object' (a)");
             obj.arrayCol = [realm.create('TestObject', {doubleCol: 1.0})]
             TestCase.assertEqual(obj.arrayCol[0].doubleCol, 1.0);
             obj.arrayCol = obj.arrayCol; // eslint-disable-line no-self-assign
             TestCase.assertEqual(obj.arrayCol[0].doubleCol, 1.0);
 
             TestCase.assertThrowsContaining(() => prim.bool = [person],
-                                            "PrimitiveArrays.bool must be of type 'boolean[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.bool must be of type 'boolean\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.int = [person],
-                                            "PrimitiveArrays.int must be of type 'number[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.int must be of type 'number\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.float = [person],
-                                            "PrimitiveArrays.float must be of type 'number[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.float must be of type 'number\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.double = [person],
-                                            "PrimitiveArrays.double must be of type 'number[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.double must be of type 'number\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.string = [person],
-                                            "PrimitiveArrays.string must be of type 'string[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.string must be of type 'string\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.data = [person],
-                                            "PrimitiveArrays.data must be of type 'binary[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.data must be of type 'binary\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.date = [person],
-                                            "PrimitiveArrays.date must be of type 'date[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.date must be of type 'date\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.optBool = [person],
-                                            "PrimitiveArrays.optBool must be of type 'boolean?[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.optBool must be of type 'boolean\?\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.optInt = [person],
-                                            "PrimitiveArrays.optInt must be of type 'number?[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.optInt must be of type 'number\?\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.optFloat = [person],
-                                            "PrimitiveArrays.optFloat must be of type 'number?[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.optFloat must be of type 'number\?\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.optDouble = [person],
-                                            "PrimitiveArrays.optDouble must be of type 'number?[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.optDouble must be of type 'number\?\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.optString = [person],
-                                            "PrimitiveArrays.optString must be of type 'string?[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.optString must be of type 'string\?\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.optData = [person],
-                                            "PrimitiveArrays.optData must be of type 'binary?[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.optData must be of type 'binary\?\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
             TestCase.assertThrowsContaining(() => prim.optDate = [person],
-                                            "PrimitiveArrays.optDate must be of type 'date?[]', got 'object' ([PersonObject{");
+                                            /PrimitiveArrays.optDate must be of type 'date\?\[\]', got 'object' \(\[PersonObject{.*}\]\)/);
 
             function testAssign(name, value) {
                 prim[name] = [value];
@@ -459,7 +459,7 @@ module.exports = {
 
             TestCase.assertEqual(array.pop(), undefined);
 
-            TestCase.assertThrowsContaining(() => array.pop(1), 'Invalid argument');
+            TestCase.assertThrowsContaining(() => array.pop(1), /Invalid argument/);
         });
 
         TestCase.assertThrowsContaining(() => array.pop(),
@@ -516,7 +516,7 @@ module.exports = {
 
             TestCase.assertEqual(array.shift(), undefined);
 
-            TestCase.assertThrowsContaining(() => array.shift(1), 'Invalid argument');
+            TestCase.assertThrowsContaining(() => array.shift(1), /Invalid argument/);
         });
 
         TestCase.assertThrowsContaining(() => {
@@ -585,7 +585,7 @@ module.exports = {
 
             TestCase.assertThrowsContaining(() => {
                 array.splice('cat', 1);
-            }, "Value 'cat' not convertible to a number");
+            }, "Value 'cat' not convertible to a number.");
 
             TestCase.assertThrowsContaining(() => {
                 array.splice(0, 0, 0);
@@ -594,7 +594,7 @@ module.exports = {
 
         TestCase.assertThrowsContaining(() => {
             array.splice(0, 0, {doubleCol: 1});
-        }, "Cannot modify managed objects outside of a write transaction");
+        }, "Cannot modify managed objects outside of a write transaction.");
     },
 
     testListDeletions: function() {
@@ -630,7 +630,7 @@ module.exports = {
             realm.delete(object);
         });
 
-        TestCase.assertThrowsContaining(() => array[0], 'invalidated');
+        TestCase.assertThrowsContaining(() => array[0], /invalidated/);
     },
 
     testLiveUpdatingResults: function() {
@@ -999,7 +999,7 @@ module.exports = {
         });
 
         TestCase.assertEqual(list.isValid(), false);
-        TestCase.assertThrowsContaining(() => list.length, 'invalidated');
+        TestCase.assertThrowsContaining(() => list.length, /invalidated/);
     },
 
     testIsEmpty: function () {
@@ -1160,7 +1160,7 @@ module.exports = {
         }
 
         TestCase.assertThrowsContaining(() => object.bool.min(), "Cannot min 'bool' array: operation not supported")
-        TestCase.assertThrowsContaining(() => object.int.min("foo"), "Invalid arguments: at most 0 expected, but 1 supplied")
+        TestCase.assertThrowsContaining(() => object.int.min("foo"), "Invalid arguments: at most 0 expected, but 1 supplied.")
     },
 
     testListAggregateFunctionsUnsupported: function() {

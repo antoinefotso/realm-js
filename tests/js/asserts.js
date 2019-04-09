@@ -18,6 +18,14 @@
 
 'use strict';
 
+function expectWithContext(val, errorMessage) {
+    let e = expect(val);
+    if (errorMessage) {
+        e = e.withContext(errorMessage);
+    }
+    return e;
+}
+
 module.exports = {
     assertSimilar: function(type, val1, val2, errorMessage, depth) {
         depth = depth || 0;
@@ -49,34 +57,16 @@ module.exports = {
         }
     },
 
-    assertEqual: function(val1, val2, errorMessage, depth) {
-        if (val1 !== val2) {
-            let message = `'${val1}' does not equal expected value '${val2}'`;
-            if (errorMessage) {
-                message = `${errorMessage} - ${message}`;
-            }
-            throw new TestFailureError(message, depth);
-        }
+    assertEqual: function(val1, val2, errorMessage) {
+        expectWithContext(val1, errorMessage).toEqual(val2);
     },
 
-    assertNotEqual: function(val1, val2, errorMessage, depth) {
-        if (val1 === val2) {
-            let message = `'${val1}' equals '${val2}'`;
-            if (errorMessage) {
-                message = `${errorMessage} - ${message}`;
-            }
-            throw new TestFailureError(message, depth);
-        }
+    assertNotEqual: function(val1, val2, errorMessage) {
+        expectWithContext(val1, errorMessage).not.toEqual(val2);
     },
 
-    assertEqualWithTolerance: function(val1, val2, tolerance, errorMessage, depth) {
-        if (val1 < val2 - tolerance || val1 > val2 + tolerance) {
-            let message = `'${val1}' does not equal '${val2}' with tolerance '${tolerance}'`;
-            if (errorMessage) {
-                message = `${errorMessage} - ${message}`;
-            }
-            throw new TestFailureError(message, depth);
-        }
+    assertEqualWithTolerance: function(val1, val2, tolerance, errorMessage) {
+        expectWithContext(val1, errorMessage).toBeCloseTo(val2, tolerance);
     },
 
     assertArray: function(value, length, errorMessage, depth) {
@@ -103,7 +93,7 @@ module.exports = {
             if (errorMessage) {
                 message = `${errorMessage} - ${message}`;
             }
-            throw new TestFailureError(message, depth);
+            throw new TestFailureError(message);
         }
 
         let compare;
@@ -129,72 +119,29 @@ module.exports = {
                 if (errorMessage) {
                     message = `${errorMessage} - ${message}`;
                 }
-                throw new TestFailureError(message, depth);
+                throw new TestFailureError(message);
             }
         }
     },
 
-    assertThrows: function(func, errorMessage, depth) {
-        let caught = false;
-        try {
-            func();
-        }
-        catch (e) {
-            caught = true;
-        }
-
-        if (!caught) {
-            throw new TestFailureError(errorMessage || 'Expected exception not thrown', depth);
-        }
+    assertThrows: function(func, errorMessage) {
+        expectWithContext(func).toThrow();
     },
 
     assertThrowsException: function(func, expectedException) {
-        let caught = false;
-        try {
-            func();
-        }
-        catch (e) {
-            caught = true;
-            if (e.name !== expectedException.name) {
-                throw new TestFailureError(`Expected a ${expectedException.name} exception but caught a ${e.name} instead. Message was: ${e.message}`);
-            }
-            if (e.message != expectedException.message) {
-                throw new TestFailureError(`Expected exception "${expectedException}" not thrown - instead caught: "${e}"`);
-            }
-        }
-
-        if (!caught) {
-            throw new TestFailureError('Expected exception not thrown');
-        }
+        expectWithContext(func).toThrow(expectedException);
     },
 
-    assertThrowsContaining: function(func, expectedMessage, depth) {
-        let caught = false;
-        try {
-            func();
-        }
-        catch (e) {
-            caught = true;
-            if (!e.message.includes(expectedMessage)) {
-                throw new TestFailureError(`Expected exception "${expectedMessage}" not thrown - instead caught: "${e}"`, depth);
-            }
-        }
-
-        if (!caught) {
-            throw new TestFailureError(`Expected exception "${expectedMessage}" not thrown`, depth);
-        }
+    assertThrowsContaining: function(func, expectedMessage) {
+        expectWithContext(func).toThrowError(Error, expectedMessage);
     },
 
-    assertTrue: function(condition, errorMessage, depth) {
-        if (!condition) {
-            throw new TestFailureError(errorMessage || `Condition ${condition} expected to be true`, depth);
-        }
+    assertTrue: function(condition, errorMessage) {
+        expectWithContext(condition, errorMessage).toBeTruthy();
     },
 
-    assertFalse: function(condition, errorMessage, depth) {
-        if (condition) {
-            throw new TestFailureError(errorMessage || `Condition ${condition} expected to be false`, depth);
-        }
+    assertFalse: function(condition, errorMessage) {
+        expectWithContext(condition, errorMessage).toBeFalsy();
     },
 
     assertInstanceOf: function(object, type, errorMessage, depth) {
@@ -212,22 +159,16 @@ module.exports = {
         }
     },
 
-    assertDefined: function(value, errorMessage, depth) {
-        if (value === undefined || value === null) {
-            throw new TestFailureError(errorMessage || `Value ${value} expected to be non-null`, depth);
-        }
+    assertDefined: function(value, errorMessage) {
+        expectWithContext(value, errorMessage).toBeDefined();
     },
 
-    assertUndefined: function(value, errorMessage, depth) {
-        if (value !== undefined) {
-            throw new TestFailureError(errorMessage || `Value ${value} expected to be undefined`, depth);
-        }
+    assertUndefined: function(value, errorMessage) {
+        expectWithContext(value, errorMessage).toBeUndefined();
     },
 
-    assertNull: function(value, errorMessage, depth) {
-        if (value !== null) {
-            throw new TestFailureError(errorMessage || `Value ${value} expected to be null`, depth);
-        }
+    assertNull: function(value, errorMessage) {
+        expectWithContext(value, errorMessage).toBe(null);
     },
 
     isNode: function() {
@@ -242,6 +183,8 @@ module.exports = {
 };
 
 function TestFailureError(message, depth) {
+    fail(message);
+
     let error;
     try {
         throw new Error(message);

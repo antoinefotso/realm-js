@@ -39,8 +39,8 @@ module.exports = {
         realm.write(() => {
             dog = realm.create('Dog', ['Fido']);
         });
-        TestCase.assertThrowsContaining(() => dog._objectId(), "_objectId() can only be used with objects from synced Realms");
-        TestCase.assertThrowsContaining(() => realm._objectForObjectId('Dog', 'foo'), "Realm._objectForObjectId() can only be used with synced Realms");
+        TestCase.assertThrowsContaining(() => dog._objectId(), "_objectId() can only be used with objects from synced Realms.");
+        TestCase.assertThrowsContaining(() => realm._objectForObjectId('Dog', 'foo'), "Realm._objectForObjectId() can only be used with synced Realms.");
     },
 
     testSynced: function() {

@@ -117,32 +117,16 @@ exports.prepare = function(done) {
 };
 
 exports.runTest = function(suiteName, testName) {
-    var testSuite = TESTS[suiteName];
-    var testMethod = testSuite && testSuite[testName];
+    const testSuite = TESTS[suiteName];
+    const testMethod = testSuite && testSuite[testName];
 
     if (testMethod) {
         // Start fresh in case of a crash in a previous run.
         Realm.clearTestState();
-        console.warn("Starting test " + testName);
-        var promise;
-        try {
-            promise = testMethod.call(testSuite);
-
-            // If the test returns a promise, then clear state on success or failure.
-            if (promise) {
-                promise.then(
-                    function() { Realm.clearTestState(); },
-                    function() { Realm.clearTestState(); }
-                );
-            }
-
-            return promise;
-        } finally {
-            // Synchronously clear state if the test is not async.
-            if (!promise) {
-                Realm.clearTestState();
-            }
+        if (!isNodeProcess) {
+            console.warn("Starting test " + testName);
         }
+        return testMethod.call(testSuite);
     } else if (!testSuite || !(testName in SPECIAL_METHODS)) {
         throw new Error('Missing test: ' + suiteName + '.' + testName);
     }

@@ -504,7 +504,7 @@ module.exports = {
       // Set to invalid type
       clone[name] = 123;
 
-      TestCase.assertThrowsContaining(() => Realm.Sync.User.deserialize(clone), `${name} must be of type '${typeof dummy[name]}'`);
+      TestCase.assertThrowsContaining(() => Realm.Sync.User.deserialize(clone), `${name} must be of type '${typeof dummy[name]}' but was of type 'number' instead.`);
 
       // Set to undefined
       clone[name] = undefined;

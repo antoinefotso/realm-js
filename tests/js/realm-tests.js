@@ -100,7 +100,7 @@ module.exports = {
         TestCase.assertEqual(defaultRealm.schemaVersion, 0);
 
         TestCase.assertThrowsContaining(() => new Realm({schemaVersion: 1, schema: []}),
-                                        "already opened with different schema version.");
+                                        /already opened with different schema version./);
 
         TestCase.assertEqual(new Realm().schemaVersion, 0);
         TestCase.assertEqual(new Realm({schemaVersion: 0}).schemaVersion, 0);
@@ -134,7 +134,7 @@ module.exports = {
 
     testRealmConstructorSchemaValidation: function() {
         TestCase.assertThrowsContaining(() => new Realm({schema: schemas.AllTypes}),
-                                        "schema must be of type 'array', got");
+                                        /schema must be of type 'array', got/);
         TestCase.assertThrowsContaining(() => new Realm({schema: ['SomeType']}),
                                         "Failed to read ObjectSchema: JS value must be of type 'object', got (SomeType)");
         TestCase.assertThrowsContaining(() => new Realm({schema: [{}]}),
@@ -151,14 +151,14 @@ module.exports = {
         }
 
         assertPropertyInvalid({type:'list[]', objectType: 'InvalidObject'},
-                              "List property 'InvalidObject.bad' must have a non-list value type");
+                              /List property 'InvalidObject.bad' must have a non-list value type/);
         assertPropertyInvalid({type:'list?', objectType: 'InvalidObject'},
-                              "List property 'InvalidObject.bad' cannot be optional");
-        assertPropertyInvalid('', "Property 'InvalidObject.bad' must have a non-empty type");
+                              /List property 'InvalidObject.bad' cannot be optional/);
+        assertPropertyInvalid('', /Property 'InvalidObject.bad' must have a non-empty type/);
         assertPropertyInvalid({type:'linkingObjects', objectType: 'InvalidObject', property: 'nosuchproperty'},
-                              "Property 'InvalidObject.nosuchproperty' declared as origin of linking objects property 'InvalidObject.bad' does not exist");
+                              /Property 'InvalidObject.nosuchproperty' declared as origin of linking objects property 'InvalidObject.bad' does not exist/);
         assertPropertyInvalid({type:'linkingObjects', objectType: 'InvalidObject', property: 'int'},
-                              "Property 'InvalidObject.int' declared as origin of linking objects property 'InvalidObject.bad' is not a link");
+                              /Property 'InvalidObject.int' declared as origin of linking objects property 'InvalidObject.bad' is not a link/);
 
         // linkingObjects property where the source property links elsewhere
         TestCase.assertThrowsContaining(() => {
@@ -174,7 +174,7 @@ module.exports = {
                     integer: 'int'
                 }
             }]});
-        }, "Property 'InvalidObject.link' declared as origin of linking objects property 'InvalidObject.linkingObjects' links to type 'IntObject'")
+        }, /Property 'InvalidObject.link' declared as origin of linking objects property 'InvalidObject.linkingObjects' links to type 'IntObject'/)
 
         {
             new Realm({schema: [{
@@ -212,7 +212,7 @@ module.exports = {
         TestCase.assertEqual(realm3.schema.length, 0);
 
         // try to open the same realm in persistent mode (should fail as you cannot mix modes)
-        TestCase.assertThrowsContaining(() => new Realm({}), 'already opened with different inMemory settings.');
+        TestCase.assertThrowsContaining(() => new Realm({}), /already opened with different inMemory settings./);
     },
 
     testRealmConstructorReadOnly: function() {
@@ -379,8 +379,8 @@ module.exports = {
             TestCase.assertEqual(obj2.stringCol, '2');
             TestCase.assertEqual(obj2.boolCol, true);
             TestCase.assertEqual(obj2.intCol, 2);
-            TestCase.assertEqualWithTolerance(obj2.floatCol, 2.2, 0.000001);
-            TestCase.assertEqualWithTolerance(obj2.doubleCol, 2.22, 0.000001);
+            TestCase.assertEqualWithTolerance(obj2.floatCol, 2.2, 6);
+            TestCase.assertEqualWithTolerance(obj2.doubleCol, 2.22, 6);
             TestCase.assertEqual(obj2.dateCol.getTime(), 2);
             TestCase.assertEqual(obj2.dataCol.byteLength, 2);
             TestCase.assertEqual(obj2.objectCol.doubleCol, 2);
@@ -427,8 +427,8 @@ module.exports = {
             TestCase.assertEqual(obj2.stringCol, '1');
             TestCase.assertEqual(obj2.boolCol, false);
             TestCase.assertEqual(obj2.intCol, 1);
-            TestCase.assertEqualWithTolerance(obj2.floatCol, 1.1, 0.000001);
-            TestCase.assertEqualWithTolerance(obj2.doubleCol, 1.11, 0.000001);
+            TestCase.assertEqualWithTolerance(obj2.floatCol, 1.1, 6);
+            TestCase.assertEqualWithTolerance(obj2.doubleCol, 1.11, 6);
             TestCase.assertEqual(obj2.dateCol.getTime(), 1);
             TestCase.assertEqual(obj2.dataCol.byteLength, 1);
             TestCase.assertEqual(obj2.objectCol.doubleCol, 1);
@@ -611,8 +611,8 @@ module.exports = {
             TestCase.assertEqual(obj0.stringCol, '2');
             TestCase.assertEqual(obj0.boolCol, false);
             TestCase.assertEqual(obj0.intCol, 2);
-            TestCase.assertEqualWithTolerance(obj0.floatCol, 2.2, 0.000001);
-            TestCase.assertEqualWithTolerance(obj0.doubleCol, 2.22, 0.000001);
+            TestCase.assertEqualWithTolerance(obj0.floatCol, 2.2, 6);
+            TestCase.assertEqualWithTolerance(obj0.doubleCol, 2.22, 6);
             TestCase.assertEqual(obj0.dateCol.getTime(), 2);
             TestCase.assertEqual(obj0.dataCol.byteLength, 2);
             TestCase.assertEqual(obj0.objectCol, null);
@@ -633,8 +633,8 @@ module.exports = {
             TestCase.assertEqual(obj0.stringCol, '3');
             TestCase.assertEqual(obj0.boolCol, false);
             TestCase.assertEqual(obj0.intCol, 2);
-            TestCase.assertEqualWithTolerance(obj0.floatCol, 2.2, 0.000001);
-            TestCase.assertEqualWithTolerance(obj0.doubleCol, 2.22, 0.000001);
+            TestCase.assertEqualWithTolerance(obj0.floatCol, 2.2, 6);
+            TestCase.assertEqualWithTolerance(obj0.doubleCol, 2.22, 6);
             TestCase.assertEqual(obj0.dateCol.getTime(), 2);
             TestCase.assertEqual(obj0.dataCol.byteLength, 2);
             TestCase.assertEqual(obj0.objectCol.doubleCol, 0);
@@ -681,17 +681,17 @@ module.exports = {
         TestCase.assertThrowsContaining(() => {
             IndexedSchema.properties = { floatCol: {type: 'float', indexed: true} };
             new Realm({schema: [IndexedSchema], path: '2.realm'});
-        }, "Property 'IndexedSchema.floatCol' of type 'float' cannot be indexed.");
+        }, /Property 'IndexedSchema.floatCol' of type 'float' cannot be indexed./);
 
         TestCase.assertThrowsContaining(() => {
             IndexedSchema.properties = { doubleCol: {type: 'double', indexed: true} }
             new Realm({schema: [IndexedSchema], path: '3.realm'});
-        }, "Property 'IndexedSchema.doubleCol' of type 'double' cannot be indexed.");
+        }, /Property 'IndexedSchema.doubleCol' of type 'double' cannot be indexed./);
 
         TestCase.assertThrowsContaining(() => {
             IndexedSchema.properties = { dataCol: {type: 'data', indexed: true} }
             new Realm({schema: [IndexedSchema], path: '4.realm'});
-        }, "Property 'IndexedSchema.dataCol' of type 'data' cannot be indexed.");
+        }, /Property 'IndexedSchema.dataCol' of type 'data' cannot be indexed./);
 
         // primary key
         IndexedSchema.properties = { intCol: {type: 'int', indexed: true} };
@@ -710,8 +710,8 @@ module.exports = {
 
             TestCase.assertEqual(obj.boolCol, properties.boolCol.default);
             TestCase.assertEqual(obj.intCol, properties.intCol.default);
-            TestCase.assertEqualWithTolerance(obj.floatCol, properties.floatCol.default, 0.000001);
-            TestCase.assertEqualWithTolerance(obj.doubleCol, properties.doubleCol.default, 0.000001);
+            TestCase.assertEqualWithTolerance(obj.floatCol, properties.floatCol.default, 6);
+            TestCase.assertEqualWithTolerance(obj.doubleCol, properties.doubleCol.default, 6);
             TestCase.assertEqual(obj.stringCol, properties.stringCol.default);
             TestCase.assertEqual(obj.dateCol.getTime(), properties.dateCol.default.getTime());
             TestCase.assertEqual(obj.dataCol.byteLength, properties.dataCol.default.byteLength);
@@ -768,7 +768,7 @@ module.exports = {
             return {};
         }
         TestCase.assertThrowsContaining(() => new Realm({schema: [InvalidObject]}),
-                                        "Realm object constructor must have a 'schema' property.");
+                                        /Realm object constructor must have a 'schema' property./);
 
         InvalidObject.schema = {
             name: 'InvalidObject',
@@ -796,7 +796,7 @@ module.exports = {
             realm.write(() => {
                 realm.create('InvalidObject', {intCol: 1});
             });
-        }, 'Realm object constructor must not return another value');
+        }, /Realm object constructor must not return another value/);
 
         // Only the original constructor should be valid.
         function InvalidCustomObject() {}
@@ -806,7 +806,7 @@ module.exports = {
             realm.write(() => {
                 realm.create(InvalidCustomObject, {intCol: 1});
             });
-        }, 'Constructor was not registered in the schema for this Realm');
+        }, /Constructor was not registered in the schema for this Realm/);
 
         // The constructor should still work when creating another Realm instance.
         realm = new Realm();
@@ -938,14 +938,14 @@ module.exports = {
         TestCase.assertThrowsContaining(() => console.log("Name: ", person.name),
                                         'Accessing object of type PersonObject which has been invalidated or deleted');
 
-        TestCase.assertThrowsContaining(() => realm.objects('PersonObject'), 'Cannot access realm that has been closed');
-        TestCase.assertThrowsContaining(() => realm.addListener('change', () => {}), 'Cannot access realm that has been closed');
-        TestCase.assertThrowsContaining(() => realm.create('PersonObject', {name: 'Ari', age: 10}), 'Cannot access realm that has been closed');
-        TestCase.assertThrowsContaining(() => realm.delete(person), 'Cannot access realm that has been closed');
-        TestCase.assertThrowsContaining(() => realm.deleteAll(), 'Cannot access realm that has been closed');
-        TestCase.assertThrowsContaining(() => realm.write(() => {}), 'Cannot access realm that has been closed');
-        TestCase.assertThrowsContaining(() => realm.removeListener('change', listenerCallback), 'Cannot access realm that has been closed');
-        TestCase.assertThrowsContaining(() => realm.removeAllListeners(), 'Cannot access realm that has been closed');
+        TestCase.assertThrowsContaining(() => realm.objects('PersonObject'), 'Cannot access realm that has been closed.');
+        TestCase.assertThrowsContaining(() => realm.addListener('change', () => {}), 'Cannot access realm that has been closed.');
+        TestCase.assertThrowsContaining(() => realm.create('PersonObject', {name: 'Ari', age: 10}), 'Cannot access realm that has been closed.');
+        TestCase.assertThrowsContaining(() => realm.delete(person), 'Cannot access realm that has been closed.');
+        TestCase.assertThrowsContaining(() => realm.deleteAll(), 'Cannot access realm that has been closed.');
+        TestCase.assertThrowsContaining(() => realm.write(() => {}), 'Cannot access realm that has been closed.');
+        TestCase.assertThrowsContaining(() => realm.removeListener('change', listenerCallback), 'Cannot access realm that has been closed.');
+        TestCase.assertThrowsContaining(() => realm.removeAllListeners(), 'Cannot access realm that has been closed.');
     },
 
     testRealmObjectForPrimaryKey: function() {
@@ -1600,8 +1600,8 @@ module.exports = {
         managedObj = realm.create(schemas.DefaultValues.name, unmanagedObj);
         TestCase.assertEqual(managedObj.boolCol, true);
         TestCase.assertEqual(managedObj.intCol, -1);
-        TestCase.assertEqualWithTolerance(managedObj.floatCol, -1.1, 0.000001);
-        TestCase.assertEqualWithTolerance(managedObj.doubleCol, -1.11, 0.000001);
+        TestCase.assertEqualWithTolerance(managedObj.floatCol, -1.1, 6);
+        TestCase.assertEqualWithTolerance(managedObj.doubleCol, -1.11, 6);
         TestCase.assertEqual(managedObj.stringCol, 'defaultString');
         TestCase.assertEqual(managedObj.dateCol.getTime(), 1);
         TestCase.assertEqual(managedObj.dataCol.byteLength, 1);
@@ -1668,22 +1668,22 @@ module.exports = {
         const realm = new Realm({sync: true});
         TestCase.assertThrowsContaining(() =>  {
             realm.privileges();
-        }, 'Wrong Realm type');
+        }, /Wrong Realm type/);
         TestCase.assertThrowsContaining(() =>  {
             realm.privileges('__Role');
-        }, 'Wrong Realm type');
+        }, /Wrong Realm type/);
         TestCase.assertThrowsContaining(() =>  {
             realm.permissions();
-        }, 'Wrong Realm type');
+        }, /Wrong Realm type/);
         TestCase.assertThrowsContaining(() =>  {
             realm.permissions('__Class');
-        }, 'Wrong Realm type');
+        }, /Wrong Realm type/);
         TestCase.assertThrowsContaining(() =>  {
             realm.subscriptions();
-        }, 'Wrong Realm type');
+        }, /Wrong Realm type/);
         TestCase.assertThrowsContaining(() =>  {
             realm.unsubscribe('foo');
-        }, 'Wrong Realm type');
+        }, /Wrong Realm type/);
     } ,
 
 };
